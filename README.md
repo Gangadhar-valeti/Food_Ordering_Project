@@ -6,7 +6,7 @@
 
 ## 🔗 Live Web Integration
 Explore the fully integrated web workspace, featuring interactive Tableau dashboards, structured project phase documents, and a local observations notepad:
-👉 **[Food Ordering Behavior Web Hub](https://gangadhar-valeti.github.io/Food_Ordering_Project/)** *(Live Dashboard)*
+👉 **[Food Ordering Behavior Web Hub](https://food-ordering-project-60nl.onrender.com)** *(Live Dashboard)*
 
 ---
 
