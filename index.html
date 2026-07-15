@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Food Ordering Behavior Analysis - Complete Project Repository & Interactive Dashboard Hub. Designed by Gangadhar Valeti.">
+  <title>Food Ordering Behavior Analysis | Repository Web Hub</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-primary: #080c14;
+      --bg-secondary: #0f172a;
+      --bg-card: rgba(15, 23, 42, 0.6);
+      --border-color: rgba(255, 255, 255, 0.06);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-orange: #ff7a1a;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #10b981;
+      --sidebar-width: 280px;
+      --notes-width: 320px;
+      --glass-glow: rgba(255, 122, 26, 0.12);
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f1f5f9;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.8);
+      --border-color: rgba(15, 23, 42, 0.08);
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --accent-orange: #ea580c;
+      --accent-amber: #d97706;
+      --accent-emerald: #059669;
+      --glass-glow: rgba(234, 88, 12, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Layout Wrapper */
+    .app-layout {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-header h2 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-orange);
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-header p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .nav-list {
+      list-style: none;
+      padding: 1rem;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .nav-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .nav-group-title {
+      font-family: var(--font-heading);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      padding-left: 0.5rem;
+    }
+
+    .nav-item {
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(255, 255, 255, 0.03);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background-color: var(--glass-glow);
+      color: var(--accent-orange);
+      font-weight: 600;
+      border-left: 3px solid var(--accent-orange);
+      border-radius: 0 6px 6px 0;
+    }
+
+    /* Main Content Area */
+    .main-workspace {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-primary);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Glowing Blobs */
+    .glow-blob {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--glass-glow) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(40px);
+      z-index: 0;
+    }
+
+    .blob-1 { top: -100px; right: -50px; }
+    .blob-2 { bottom: -100px; left: -50px; }
+
+    .main-header {
+      padding: 1.2rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      background-color: rgba(8, 12, 20, 0.8);
+      backdrop-filter: blur(10px);
+    }
+
+    .project-meta h1 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .project-meta p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .btn-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-toggle:hover {
+      border-color: var(--accent-orange);
+      transform: scale(1.05);
+    }
+
+    /* Tab switcher for dashboards */
+    .view-switcher {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .switch-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .switch-btn.active {
+      background: var(--bg-primary);
+      color: var(--accent-orange);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    /* Content Body Grid */
+    .content-body {
+      flex-grow: 1;
+      padding: 2rem;
+      overflow-y: auto;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Document Reader Card */
+    .doc-viewer {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    .doc-viewer.active {
+      display: block;
+    }
+
+    .doc-viewer h2 {
+      font-family: var(--font-heading);
+      color: var(--accent-orange);
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .doc-viewer p {
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+
+    .doc-viewer table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+
+    .doc-viewer th, .doc-viewer td {
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    .doc-viewer th {
+      background-color: rgba(255, 122, 26, 0.08);
+      font-family: var(--font-heading);
+      color: var(--text-primary);
+    }
+
+    /* Document Open Button */
+    .btn-open-doc {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 122, 26, 0.15);
+      border: 1px solid var(--accent-orange);
+      color: var(--accent-orange);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      font-family: var(--font-heading);
+      transition: all 0.2s ease;
+    }
+
+    .btn-open-doc:hover {
+      background: var(--accent-orange);
+      color: #fff;
+    }
+
+    /* Tableau Visualization Panel */
+    .tableau-panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .tableau-panel.active {
+      display: flex;
+    }
+
+    .tableau-frame-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tableau-container {
+      width: 100%;
+      min-height: 650px;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      display: none;
+    }
+
+    .tableau-container.active {
+      display: block;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: opacity 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 122, 26, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--accent-orange);
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Side Notebook & Checklist */
+    .panel-notes {
+      width: var(--notes-width);
+      background-color: var(--bg-secondary);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .notes-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .notes-header h3 {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .notes-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .notes-area {
+      width: 100%;
+      height: 180px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      padding: 0.8rem;
+      resize: none;
+      outline: none;
+    }
+
+    .notes-area:focus {
+      border-color: var(--accent-orange);
+    }
+
+    .checklist-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .checklist-item {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+      font-size: 0.8rem;
+    }
+
+    .checklist-item input {
+      margin-top: 0.2rem;
+      accent-color: var(--accent-orange);
+      cursor: pointer;
+    }
+
+    .checklist-item label {
+      color: var(--text-secondary);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    .checklist-item input:checked + label {
+      text-decoration: line-through;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    [data-theme="light"] .checklist-item input:checked + label {
+      color: rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Project Workspace</h2>
+        <p>Gangadhar Valeti | Developer</p>
+      </div>
+      <ul class="nav-list">
+        
+        <!-- Interactive Dashboard Hub -->
+        <li class="nav-group">
+          <div class="nav-group-title">Analytics Dashboard</div>
+          <div class="nav-item active" data-target="view-tableau">
+            📊 Interactive Tableau Boards
+          </div>
+        </li>
+
+        <!-- Phase 1 Documents -->
+        <li class="nav-group">
+          <div class="nav-group-title">1. Ideation Phase</div>
+          <div class="nav-item" data-target="doc-problem">Problem Statement</div>
+          <div class="nav-item" data-target="doc-empathy">Empathy Map Canvas</div>
+          <div class="nav-item" data-target="doc-brainstorm">Brainstorming</div>
+        </li>
+
+        <!-- Phase 2 Documents -->
+        <li class="nav-group">
+          <div class="nav-group-title">2. Requirement Analysis</div>
+          <div class="nav-item" data-target="doc-journey">Customer Journey Map</div>
+          <div class="nav-item" data-target="doc-requirements">Solution Requirements</div>
+          <div class="nav-item" data-target="doc-dfd">Data Flow Diagram</div>
+          <div class="nav-item" data-target="doc-techstack">Technology Stack</div>
+        </li>
+
+        <!-- Learning Handouts (Extra Folder added in Middle) -->
+        <li class="nav-group">
+          <div class="nav-group-title">Learning Handouts</div>
+          <div class="nav-item" data-target="handout-bi">Introduction to BI</div>
+          <div class="nav-item" data-target="handout-tableau">Introduction to Tableau</div>
+          <div class="nav-item" data-target="handout-prep">Introduction to Tableau Prep</div>
+          <div class="nav-item" data-target="handout-dataviz">Data Visualization-1</div>
+          <div class="nav-item" data-target="handout-filters">Sets and Filters</div>
+        </li>
+
+        <!-- Phase 3 Documents -->
+        <li class="nav-group">
+          <div class="nav-group-title">3. Project Design</div>
+          <div class="nav-item" data-target="doc-problemfit">Problem-Solution Fit</div>
+          <div class="nav-item" data-target="doc-proposed">Proposed Solution</div>
+          <div class="nav-item" data-target="doc-arch">Solution Architecture</div>
+        </li>
+
+        <!-- Phase 4 Documents -->
+        <li class="nav-group">
+          <div class="nav-group-title">4. Project Planning</div>
+          <div class="nav-item" data-target="doc-planning">Sprint Scheduling</div>
+        </li>
+
+        <!-- Phase 5 Documents -->
+        <li class="nav-group">
+          <div class="nav-group-title">5. Project Development</div>
+          <div class="nav-item" data-target="doc-preprocessing">Preprocessing & Questions</div>
+          <div class="nav-item" data-target="doc-dataset">Dataset Schema</div>
+        </li>
+
+        <!-- Phase 6 & 7 Documents -->
+        <li class="nav-group">
+          <div class="nav-group-title">6 & 7. Testing & Docs</div>
+          <div class="nav-item" data-target="doc-testing">Performance Testing</div>
+          <div class="nav-item" data-target="doc-final">Final Report</div>
+          <div class="nav-item" data-target="doc-video">Demo Video Outline</div>
+        </li>
+
+      </ul>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-workspace">
+      <div class="glow-blob blob-1"></div>
+      <div class="glow-blob blob-2"></div>
+
+      <header class="main-header">
+        <div class="project-meta">
+          <h1>Food Ordering Behavior Analysis</h1>
+          <p id="workspace-subtitle">Interactive Tableau Analytics Visualizer</p>
+        </div>
+        <div class="header-actions">
+          <div class="view-switcher" id="tableau-switcher">
+            <button class="switch-btn active" data-viz="viz-story3">Story 3 (Operational)</button>
+            <button class="switch-btn" data-viz="viz-story2">Story 2 (Behavioral)</button>
+          </div>
+          <button id="theme-toggle" class="btn-toggle" title="Toggle Theme">🌓</button>
+        </div>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- Tab 1: Tableau Panel (Active by default) -->
+        <div class="tableau-panel active" id="view-tableau">
+          <div class="tableau-frame-header">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="status-dot"></span>
+              <span style="font-size: 0.85rem; font-weight: 500;" id="active-tableau-title">Story 3: Operational Delivery Performance</span>
+            </div>
+            <a href="https://public.tableau.com/views/Food_Ordering_Behavior_Analys/Story3" target="_blank" style="font-size: 0.8rem; color: var(--accent-orange); text-decoration: none;" id="active-original-link">Original View ↗</a>
+          </div>
+
+          <!-- Story 3 container -->
+          <div class="tableau-container active" id="viz-story3">
+            <div class="loading-overlay" id="loader-story3">
+              <div class="spinner"></div>
+              <p style="font-weight: 500; font-size: 0.9rem;">Loading Story 3 (Operational)...</p>
+            </div>
+            <div class='tableauPlaceholder' id='vizStory3_placeholder' style='position: relative; width: 100%; height: 100%;'>
+              <noscript><a href='#'><img alt='Story 3 ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Fo&#47;Food_Ordering_Behavior_Analys&#47;Story3&#47;1_rss.png' style='border: none' /></a></noscript>
+              <object class='tableauViz' style='display:none;'>
+                <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> 
+                <param name='embed_code_version' value='3' /> 
+                <param name='site_root' value='' />
+                <param name='name' value='Food_Ordering_Behavior_Analys&#47;Story3' />
+                <param name='tabs' value='no' />
+                <param name='toolbar' value='yes' />
+                <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Fo&#47;Food_Ordering_Behavior_Analys&#47;Story3&#47;1.png' /> 
+                <param name='animate_transition' value='yes' />
+                <param name='display_static_image' value='yes' />
+                <param name='display_spinner' value='yes' />
+                <param name='display_overlay' value='yes' />
+                <param name='display_count' value='yes' />
+                <param name='language' value='en-US' />
+              </object>
+            </div>
+          </div>
+
+          <!-- Story 2 container -->
+          <div class="tableau-container" id="viz-story2">
+            <div class="loading-overlay" id="loader-story2">
+              <div class="spinner"></div>
+              <p style="font-weight: 500; font-size: 0.9rem;">Loading Story 2 (Consumer Spend)...</p>
+            </div>
+            <div class='tableauPlaceholder' id='vizStory2_placeholder' style='position: relative; width: 100%; height: 100%;'>
+              <noscript><a href='#'><img alt='Story 2 ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Fo&#47;Food_Ordering_Behavior_Analysisadnitstasks&#47;Story2&#47;1_rss.png' style='border: none' /></a></noscript>
+              <object class='tableauViz' style='display:none;'>
+                <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> 
+                <param name='embed_code_version' value='3' /> 
+                <param name='site_root' value='' />
+                <param name='name' value='Food_Ordering_Behavior_Analysisadnitstasks&#47;Story2' />
+                <param name='tabs' value='no' />
+                <param name='toolbar' value='yes' />
+                <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Fo&#47;Food_Ordering_Behavior_Analysisadnitstasks&#47;Story2&#47;1.png' /> 
+                <param name='animate_transition' value='yes' />
+                <param name='display_static_image' value='yes' />
+                <param name='display_spinner' value='yes' />
+                <param name='display_overlay' value='yes' />
+                <param name='display_count' value='yes' />
+                <param name='language' value='en-US' />
+              </object>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documentation View Tabs -->
+        <div class="doc-viewer" id="doc-problem">
+          <h2>
+            Problem Statement
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/1_Ideation_Phase/Define Problem Statements Template.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p><strong>Context:</strong> The food delivery industry is becoming increasingly competitive, with businesses facing challenges in understanding customer behaviour, optimizing delivery performance, and maximizing revenue. Despite having large volumes of data, it is often difficult to identify key factors that influence order demand, customer spending patterns, and service efficiency.</p>
+          <p><strong>Our Solution:</strong> This project addresses the problem by analysing food ordering data using Tableau to uncover meaningful patterns and trends. The dataset includes key attributes such as Order ID, Order Value, Delivery Fee, Cuisine, Meal Type, City, and Time Taken for Delivery.</p>
+        </div>
+
+        <div class="doc-viewer" id="doc-empathy">
+          <h2>
+            Empathy Map Canvas
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/1_Ideation_Phase/Empathy Map Canvas.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p><strong>Persona: Neha Reddy (Regular Customer)</strong></p>
+          <table>
+            <tr><th>Quadrant</th><th>Observations</th></tr>
+            <tr><td><strong>Says</strong></td><td>"I want my food delivered quickly and hot." / "Why is delivery fee high?"</td></tr>
+            <tr><td><strong>Thinks</strong></td><td>"Am I getting the best discounts?" / "I hope my food arrives fresh."</td></tr>
+            <tr><td><strong>Does</strong></td><td>Orders lunch & dinner peak hours, checks ratings, reorders from reliable platforms.</td></tr>
+            <tr><td><strong>Feels</strong></td><td>Pained by long delivery delays; gained by prompt service and quality options.</td></tr>
+          </table>
+        </div>
+
+        <div class="doc-viewer" id="doc-brainstorm">
+          <h2>
+            Brainstorming
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/1_Ideation_Phase/Brainstorming- Idea Generation- Prioritizaation Template.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p><strong>Key Strategic Focus:</strong></p>
+          <ul>
+            <li>Dynamic Delivery Fees to boost off-peak snack hour ordering volume.</li>
+            <li>Localized dispatch partner scaling during high workload slots (12-2 PM, 6-9 PM).</li>
+            <li>Targeted banner placement for top cuisines matching regional preference matrices.</li>
+          </ul>
+        </div>
+
+        <div class="doc-viewer" id="doc-journey">
+          <h2>
+            Customer Journey Map
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/2_Requirement_Analysis/Customer Journey Map - Example.pdf" class="btn-open-doc">📄 Open PDF Document</a>
+          </h2>
+          <p>Explores Neha Reddy's interaction flow from Appetite trigger, Restaurant selection, Order Checkout, Delivery Waiting transit, and final Rating Submission.</p>
+        </div>
+
+        <div class="doc-viewer" id="doc-requirements">
+          <h2>
+            Solution Requirements
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/2_Requirement_Analysis/Solution Requirements.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <table>
+            <tr><th>Processor (CPU)</th><td>Dual-core (Intel i3 minimum) / Recommended: Intel i5 / Ryzen 5+</td></tr>
+            <tr><th>RAM</th><td>8 GB minimum / 16 GB Recommended</td></tr>
+            <tr><th>Storage</th><td>2-3 GB free / SSD with 10+ GB free</td></tr>
+            <tr><th>OS</th><td>Windows 10/11 or macOS</td></tr>
+            <tr><th>Software</th><td>Tableau Desktop or Tableau Public</td></tr>
+          </table>
+        </div>
+
+        <div class="doc-viewer" id="doc-dfd">
+          <h2>
+            Data Flow Diagram
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/2_Requirement_Analysis/Data Flow Diagrams and User Stories.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p><strong>Pipeline Flow:</strong> Raw CSV File ➔ Preprocessing Cleanups (Nulls & Types) ➔ Tableau Workspace connection ➔ Published Worksheet dashboard ➔ Local Storage Web Integration interface.</p>
+        </div>
+
+        <div class="doc-viewer" id="doc-techstack">
+          <h2>
+            Technology Stack
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/2_Requirement_Analysis/Technology Stack - Template.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <ul>
+            <li><strong>Frontend Layout:</strong> HTML5, CSS3 Grid/Flexbox, ES6+ Javascript.</li>
+            <li><strong>Data Visualizer:</strong> Tableau Public Embed JavaScript Library.</li>
+            <li><strong>Notes Management:</strong> Local Storage browser API.</li>
+          </ul>
+        </div>
+
+        <!-- Handout Details Viewer Tabs -->
+        <div class="doc-viewer" id="handout-bi">
+          <h2>
+            Introduction to BI
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/handouts/1. Business Intelligence & Data Analytics.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p><strong>Topic: Business Intelligence & Data Analytics</strong></p>
+          <p>Data Analytics (DA) Fundamentals and Types. Explores how business intelligence pipelines ingest, clean, and represent raw transactional metrics to yield tactical reports for companies.</p>
+        </div>
+
+        <div class="doc-viewer" id="handout-tableau">
+          <h2>
+            Introduction to Tableau
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/handouts/2. Introduction to Tableau.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p><strong>Topic: INTRODUCTION TO TABLEAU</strong></p>
+          <p>Explores the Tableau ecosystem, Desktop worksheets design, drag-and-drop filters, dimensions configuration, and workbook story assembly.</p>
+        </div>
+
+        <div class="doc-viewer" id="handout-prep">
+          <h2>
+            Introduction to Tableau Prep
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/handouts/3. Tableau Prep Builder Introduction.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p><strong>Topic: Tableau Prep Builder Introduction</strong></p>
+          <p>Tableau Prep Builder is a data preparation tool designed to help users clean, combine, and transform raw data before analysis and visualization. It works smoothly with Tableau Desktop and Tableau Cloud, making it easier to move from raw data to meaningful insights.</p>
+        </div>
+
+        <div class="doc-viewer" id="handout-dataviz">
+          <h2>
+            Data Visualization-1
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/handouts/Data Visualization-1.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p><strong>Topic: Data Visualization Foundations</strong></p>
+          <p>Explores visual presentation metrics, chart selections rules, color gradients guidelines, and dynamic user interface designs.</p>
+        </div>
+
+        <div class="doc-viewer" id="handout-filters">
+          <h2>
+            Sets and Filters
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/handouts/Sets and Filters.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p><strong>Topic: Sets and Filters in Tableau</strong></p>
+          <p>Explores filters configuration, creating static and dynamic sets, and configuring dimension constraints to optimize load performance.</p>
+        </div>
+
+        <!-- Core Repository Docs -->
+        <div class="doc-viewer" id="doc-problemfit">
+          <h2>
+            Problem-Solution Fit
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/3_Project_Design_Phase/Problem - Solution Fit Template.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <table>
+            <tr><th>Problem</th><th>Tableau Solution</th><th>Strategic Value</th></tr>
+            <tr><td>No fast business overview</td><td>KPI Demonstration</td><td>Instant platform health card diagnostics</td></tr>
+            <tr><td>Cuisine matching in cities</td><td>Heatmap (Flavors across cities)</td><td>Campaign optimization</td></tr>
+            <tr><td>Operational delivery delay</td><td>Delivery distribution bar chart</td><td>Logistics bottlenecks identification</td></tr>
+          </table>
+        </div>
+
+        <div class="doc-viewer" id="doc-proposed">
+          <h2>
+            Proposed Solution
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/3_Project_Design_Phase/Proposed Solution Template.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p>A web analytics hub integrating 9 subtask dashboards with localized notes workspaces to allow Business Analysts and Operations Managers to collaborate in real-time on visual reports.</p>
+        </div>
+
+        <div class="doc-viewer" id="doc-arch">
+          <h2>
+            Solution Architecture
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/3_Project_Design_Phase/Solution Architecture.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p>Multi-layered model comprising data storage (CSV), analytics visualization engine (Tableau Server), web hosting container (index.html), and secure browser caching layer (localStorage).</p>
+        </div>
+
+        <div class="doc-viewer" id="doc-planning">
+          <h2>
+            Sprint Scheduling
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/4_Project_Planning_Phase/Project Planning Template.docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <ul>
+            <li><strong>Sprint 1 (Data Prep):</strong> Gathering & loading data (2 SP), preprocessing values (1 SP).</li>
+            <li><strong>Sprint 2 (Visuals):</strong> Story 3 operational dashboard (3 SP), Story 2 behavioral dashboard (3 SP).</li>
+            <li><strong>Sprint 3 (Web Hub):</strong> Designing index.html portal (2 SP), workspace local tools (2 SP).</li>
+          </ul>
+        </div>
+
+        <div class="doc-viewer" id="doc-preprocessing">
+          <h2>
+            Preprocessing & Visual Subtasks
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/5_Project_Development_Phase/1st PDF - Preprocessing Steps and Business Questions.pdf" class="btn-open-doc">📄 Open PDF Document</a>
+          </h2>
+          <p>Summary of the 9 visual subtasks designed in Tableau:</p>
+          <ol>
+            <li><strong>KPI Demonstration:</strong> Evaluating order counts, revenues, and global ratings.</li>
+            <li><strong>Flavors Across Cities:</strong> Heatmap checking regional cuisine demands.</li>
+            <li><strong>Order Distribution by Demos:</strong> Stacked bar checking restaurant selections.</li>
+            <li><strong>Distribution of Cuisines:</strong> Pie chart illustrating overall share.</li>
+            <li><strong>Orders by Company:</strong> Solo consumption spikes across meal slots.</li>
+            <li><strong>Donut Ratings:</strong> Average rating breakdown per slot.</li>
+            <li><strong>Top 5 Cities:</strong> Mumbai leading over Pune and Bangalore.</li>
+            <li><strong>Revenues:</strong> Breakfast/Snacks contributing top revenue metrics.</li>
+            <li><strong>Delivery Times:</strong> Most shipments completing within 4-10 minute slots.</li>
+          </ol>
+        </div>
+
+        <div class="doc-viewer" id="doc-dataset">
+          <h2>
+            Dataset Schema
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/5_Project_Development_Phase/2nd PDF - Dashboard Screenshot and Story.pdf" class="btn-open-doc">📄 Open PDF Document</a>
+          </h2>
+          <ul>
+            <li><strong>Order ID:</strong> Primary Key.</li>
+            <li><strong>Order Value:</strong> Numeric spending metric.</li>
+            <li><strong>Delivery Fee:</strong> Logistics price.</li>
+            <li><strong>Cuisine / Meal Type:</strong> Food preferences dimensions.</li>
+            <li><strong>City / Delivery Time Taken:</strong> Location and speed metrics.</li>
+          </ul>
+        </div>
+
+        <div class="doc-viewer" id="doc-testing">
+          <h2>
+            Performance Testing
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/6_Performance_Testing/Tableau .docx" class="btn-open-doc">📂 Open Word Doc</a>
+          </h2>
+          <p>Evaluates rendering speeds, filter latencies, and worksheet calculations to ensure responsiveness when loading dashboards.</p>
+        </div>
+
+        <div class="doc-viewer" id="doc-final">
+          <h2>
+            Final Project Report
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/7_Doc_and_Demo/Final Report.pdf" class="btn-open-doc">📄 Open PDF Document</a>
+          </h2>
+          <p>Complete project documentation combining Ideation, Requirements, Design, Development, and Testing summaries. Outlines operational improvements for high-spend demographics.</p>
+        </div>
+
+        <div class="doc-viewer" id="doc-video">
+          <h2>
+            Presentation Video Walkthrough
+            <a href="file:///C:/Users/karan/OneDrive/Desktop/Food_Ordering_Project_Repo/presentation%20vedio/Recording%202026-07-15%20230648.mp4" class="btn-open-doc" target="_blank">🎥 Play Video Recording</a>
+          </h2>
+          <p><strong>Local File:</strong> <code>presentation vedio/Recording 2026-07-15 230648.mp4</code></p>
+          <p><strong>File Size:</strong> 1.44 GB (MP4, High Definition)</p>
+          <br>
+          <p>This presentation video provides a comprehensive video walkthrough of the complete project, detailing:
+            <ul style="margin-left: 20px; margin-top: 10px; margin-bottom: 10px;">
+              <li><strong>Workbook Overview:</strong> Connecting to the 50,000-record dataset and setting up dimensions and measures.</li>
+              <li><strong>Interactive Dashboards:</strong> Detailed features of the Business Performance, Operational Efficiency, and Customer Experience dashboards.</li>
+              <li><strong>Tableau Story:</strong> Walkthrough of the Story points, outlining behavioral and logistics insights.</li>
+              <li><strong>Web Hub Integration:</strong> Demonstrating how the Tableau dashboards are embedded into this HTML interface.</li>
+            </ul>
+          </p>
+          <p><em>Note: The video file has been added to <code>.gitignore</code> to bypass GitHub's 100MB single-file size restriction. It remains fully accessible and playable within your local workspace.</em></p>
+        </div>
+    </main>
+
+    <!-- Side Workspace Notes Panel -->
+    <aside class="panel-notes">
+      <div class="notes-header">
+        <h3>📝 Observation Workspace</h3>
+      </div>
+      <div class="notes-body">
+        <textarea id="notes-input" class="notes-area" placeholder="Type your observations here..."></textarea>
+        <button id="btn-save" class="btn-save" style="width: 100%; border: 1px solid var(--border-color); padding: 0.6rem; cursor: pointer; border-radius: 6px; font-weight: 600;">Save notes</button>
+        <span id="save-alert" style="color: var(--accent-emerald); font-size: 0.8rem; display: none; text-align: center;">Saved!</span>
+        
+        <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1rem;">
+          <h4 style="font-family: var(--font-heading); font-size: 0.85rem; margin-bottom: 0.8rem;">Data Exploration Tasks</h4>
+          <ul class="checklist-list">
+            <li class="checklist-item">
+              <input type="checkbox" id="chk-kpis">
+              <label for="chk-kpis">Inspect platform KPIs and average rating.</label>
+            </li>
+            <li class="checklist-item">
+              <input type="checkbox" id="chk-heatmap">
+              <label for="chk-heatmap">Identify top cuisine in Delhi and Mumbai.</label>
+            </li>
+            <li class="checklist-item">
+              <input type="checkbox" id="chk-delivery">
+              <label for="chk-delivery">Evaluate delivery time distribution benchmarks.</label>
+            </li>
+            <li class="checklist-item">
+              <input type="checkbox" id="chk-revenue">
+              <label for="chk-revenue">Compare snacks revenue contribution vs. dinner.</label>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Primary Iframe Load & Resizing Scripts -->
+  <script type='text/javascript'>
+    var divStory3 = document.getElementById('vizStory3_placeholder');
+    var vizStory3 = divStory3.getElementsByTagName('object')[0];
+    
+    var divStory2 = document.getElementById('vizStory2_placeholder');
+    var vizStory2 = divStory2.getElementsByTagName('object')[0];
+
+    function resizeTableau() {
+      if (divStory3.offsetWidth > 800) {
+        vizStory3.style.width = '100%'; vizStory3.style.height = '680px';
+      } else {
+        vizStory3.style.width = '100%'; vizStory3.style.height = '500px';
+      }
+
+      if (divStory2.offsetWidth > 800) {
+        vizStory2.style.width = '100%'; vizStory2.style.height = '720px';
+      } else {
+        vizStory2.style.width = '100%'; vizStory2.style.height = '550px';
+      }
+    }
+
+    resizeTableau();
+    window.addEventListener('resize', resizeTableau);
+
+    var scriptElement = document.createElement('script');
+    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+    
+    scriptElement.onload = function() {
+      setTimeout(function() {
+        var loader3 = document.getElementById('loader-story3');
+        if (loader3) {
+          loader3.style.opacity = '0';
+          setTimeout(function() { loader3.style.display = 'none'; }, 500);
+        }
+      }, 2500);
+    };
+
+    vizStory3.parentNode.insertBefore(scriptElement, vizStory3);
+  </script>
+
+  <!-- Navigation, Theme and Switcher Script -->
+  <script>
+    const navItems = document.querySelectorAll('.nav-item');
+    const viewTableau = document.getElementById('view-tableau');
+    const docViewers = document.querySelectorAll('.doc-viewer');
+    const tabSwitcher = document.getElementById('tableau-switcher');
+    const subtitle = document.getElementById('workspace-subtitle');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        navItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        const target = item.getAttribute('data-target');
+        
+        if (target === 'view-tableau') {
+          viewTableau.classList.add('active');
+          docViewers.forEach(v => v.classList.remove('active'));
+          tabSwitcher.style.display = 'flex';
+          subtitle.textContent = "Interactive Tableau Analytics Visualizer";
+        } else {
+          viewTableau.classList.remove('active');
+          docViewers.forEach(v => {
+            if (v.id === target) {
+              v.classList.add('active');
+            } else {
+              v.classList.remove('active');
+            }
+          });
+          tabSwitcher.style.display = 'none';
+          subtitle.textContent = item.textContent.trim() + " Document View";
+        }
+      });
+    });
+
+    const switchBtns = document.querySelectorAll('.switch-btn');
+    const tableauContainers = document.querySelectorAll('.tableau-container');
+    const activeTitle = document.getElementById('active-tableau-title');
+    const activeLink = document.getElementById('active-original-link');
+
+    const urls = {
+      'viz-story3': 'https://public.tableau.com/views/Food_Ordering_Behavior_Analys/Story3',
+      'viz-story2': 'https://public.tableau.com/views/Food_Ordering_Behavior_Analysisadnitstasks/Story2'
+    };
+
+    const titles = {
+      'viz-story3': 'Story 3: Operational Delivery Performance',
+      'viz-story2': 'Story 2: Consumer Spend & Behavior Analysis'
+    };
+
+    let story2Loaded = false;
+
+    switchBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const targetViz = btn.getAttribute('data-viz');
+        
+        tableauContainers.forEach(container => {
+          if (container.id === targetViz) {
+            container.classList.add('active');
+          } else {
+            container.classList.remove('active');
+          }
+        });
+
+        activeTitle.textContent = titles[targetViz];
+        activeLink.href = urls[targetViz];
+
+        if (targetViz === 'viz-story2' && !story2Loaded) {
+          story2Loaded = true;
+          setTimeout(function() {
+            var loader2 = document.getElementById('loader-story2');
+            if (loader2) {
+              loader2.style.opacity = '0';
+              setTimeout(function() { loader2.style.display = 'none'; }, 500);
+            }
+          }, 2500);
+        }
+      });
+    });
+
+    const themeBtn = document.getElementById('theme-toggle');
+    const root = document.documentElement;
+    const currentTheme = localStorage.getItem('hub-theme') || 'dark';
+    root.setAttribute('data-theme', currentTheme);
+
+    themeBtn.addEventListener('click', () => {
+      const activeTheme = root.getAttribute('data-theme');
+      const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', newTheme);
+      localStorage.setItem('hub-theme', newTheme);
+    });
+
+    const notesArea = document.getElementById('notes-input');
+    const saveBtn = document.getElementById('btn-save');
+    const saveAlert = document.getElementById('save-alert');
+    
+    notesArea.value = localStorage.getItem('hub-notes') || '';
+    
+    saveBtn.addEventListener('click', () => {
+      localStorage.setItem('hub-notes', notesArea.value);
+      saveAlert.style.display = 'inline';
+      setTimeout(() => { saveAlert.style.display = 'none'; }, 1500);
+    });
+
+    const checkIds = ['chk-kpis', 'chk-heatmap', 'chk-delivery', 'chk-revenue'];
+    checkIds.forEach(id => {
+      const checkbox = document.getElementById(id);
+      checkbox.checked = localStorage.getItem(id) === 'true';
+      checkbox.addEventListener('change', () => {
+        localStorage.setItem(id, checkbox.checked);
+      });
+    });
+  </script>
+</body>
+</html>
